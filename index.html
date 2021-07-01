@@ -25,7 +25,7 @@
 
     <script>
       // initialize the map
-      var map = L.map('map').setView([22.87649, -109.89978], 13);
+      var map = L.map('map').setView([34, 132], 13);
 
       // load a tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,22 +35,24 @@
 
       map.setZoom(5);
 
-      locations = [
-        [22.87649, -109.89978, 100], // lat, lng, intensity
-        [22.87649, -109.89978, 100000] // to just see that it works, put one place for now really intense
-      ];
-
-      var heat = L.heatLayer(locations, { radius: 35 });
-      map.addLayer(heat);
-
       const Http = new XMLHttpRequest();
-      const url = 'https://flannel-chesterfield-04687.herokuapp.com/';
-      // const url = 'https://node-lm37vw--8080.local.webcontainer.io';
+      const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmap';
       Http.open('GET', url);
       Http.send();
 
       Http.onreadystatechange = e => {
-        console.log(Http.responseText);
+        var locations = []
+
+        var data = JSON.parse(Http.responseText);
+        data.forEach(function(item, index, array) {
+          //console.log(item['latitude'], index)
+          var loc = [item['latitude'],item['longitude'], 100];
+          locations.push(loc);
+        })
+        //console.log(data);
+
+        var heat = L.heatLayer(locations, { radius: 35 });
+        map.addLayer(heat);
       };
     </script>
   </body>
