@@ -23,6 +23,7 @@
   <script>
     // initialize the map
     var map = L.map('map', {
+      worldCopyJump: true,
     minZoom: 4,
     maxZoom: 18
     }).setView([47, 1], 13);
@@ -36,34 +37,25 @@
       map.setZoom(8);
 
       const Http = new XMLHttpRequest();
-      const url = 'http://localhost:8080/ipv4heatmapbounded';
+      // const url = 'http://localhost:8080/ipv4heatmapbounded';
 
       // const url = 'http://localhost:8080/ipv4heatmapbounded/24/40/132/135';
-      // const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmap';
+      const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded';
       // const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded/24/40/132/135';
-      Http.open('GET', url); // change this to call with initial map bounds
-      Http.send();
+ 
+      //initialize heat layer
+      locations = [];
+      heat = L.heatLayer(locations, { radius: 35 });
+      map.addLayer(heat);
+      addHeatLayer()
 
-      Http.onreadystatechange = e => {
-        var locations = []
-
-        var data = JSON.parse(Http.responseText);
-        data.forEach(function(item, index, array) {
-          var loc = [item['latitude'],item['longitude'], item['heat']];
-          locations.push(loc);
-        })
-        //console.log(data);
-
-        heat = L.heatLayer(locations, { radius: 35 });
-        map.addLayer(heat);
-      };
-
-
-      
       map.on('moveend', function() { 
+        addHeatLayer();
+      });
+
+      function addHeatLayer() {
         map.removeLayer(heat);
 
-        // console.log(map.getBounds());
         var low_lat = map.getBounds()['_southWest']['lat'];
         var high_lat = map.getBounds()['_northEast']['lat'];
         var low_lng = map.getBounds()['_southWest']['lng'];
@@ -71,7 +63,7 @@
         let url_b = url + '/' + low_lat + '/' + high_lat + '/' + low_lng + '/' + high_lng;
         console.log(url_b);
         updateHeat(url_b);
-      });
+      }
 
       function updateHeat(url_b) {
         Http.open('GET', url_b);
@@ -81,7 +73,6 @@
           map.removeLayer(heat)
 
           var locations = []
-
           var data = JSON.parse(Http.responseText);
           data.forEach(function(item, index, array) {
             var loc = [item['latitude'],item['longitude'], item['heat']];
