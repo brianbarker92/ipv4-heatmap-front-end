@@ -23,7 +23,7 @@
 
   <script>
     // initialize the map
-    var map = L.map('map', {
+    const map = L.map('map', {
       worldCopyJump: true,
       minZoom: 5,
       maxZoom: 18
@@ -38,11 +38,11 @@
     map.setZoom(10);
 
     const Http = new XMLHttpRequest();
-    const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded';
+    const heat_url_base = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded';
     
     //initialize heat layer
-    locations = [];
-    heat = L.heatLayer(locations, { radius: 35 });
+    var empty_heat = [];
+    heat = L.heatLayer(empty_heat, { radius: 35 });
     map.addLayer(heat);
     addHeatLayer();
 
@@ -57,13 +57,12 @@
       var high_lat = map.getBounds()['_northEast']['lat'];
       var low_lng = map.getBounds()['_southWest']['lng'];
       var high_lng = map.getBounds()['_northEast']['lng'];
-      let url_b = url + '/' + low_lat + '/' + high_lat + '/' + low_lng + '/' + high_lng;
-      console.log(url_b);
-      updateHeat(url_b);
+      let heat_url_full = heat_url_base + '/' + low_lat + '/' + high_lat + '/' + low_lng + '/' + high_lng;
+      updateHeat(heat_url_full);
     }
 
-    function updateHeat(url_b) {
-      Http.open('GET', url_b);
+    function updateHeat(heat_url_full) {
+      Http.open('GET', heat_url_full);
       Http.send();
 
       Http.onreadystatechange = e => {
