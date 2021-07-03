@@ -16,13 +16,14 @@ body {
 #title {
   top: 0;
   left: 44;
-  width: 300px;
+  width: 350px;
   opacity: 0.8; 
   padding: 10px;
   text-align: center;
   background: #701111;
   color: white;
-  font-size: 30px;
+  font-size: 35px;
   margin: 11px;
   border-radius: 4px;
+  height: 44px;
 }
