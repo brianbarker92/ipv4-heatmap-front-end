@@ -28,7 +28,6 @@
       minZoom: 5,
       maxZoom: 18
     }).setView([51.5, 0], 13);
-    var heat = null;
       // load a tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
@@ -42,7 +41,7 @@
     
     //initialize heat layer
     var empty_heat = [];
-    heat = L.heatLayer(empty_heat, { radius: 35 });
+    var heat = L.heatLayer(empty_heat, {});
     map.addLayer(heat);
     addHeatLayer();
 
@@ -75,7 +74,7 @@
           locations.push(loc);
         })
 
-        heat = L.heatLayer(locations, { radius: 35 });
+        heat = L.heatLayer(locations, { radius: 30 });
         map.addLayer(heat);
       };
     }
