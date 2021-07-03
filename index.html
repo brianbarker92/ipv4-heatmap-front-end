@@ -10,76 +10,76 @@
     crossorigin=""></script>
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="leaflet.heat.js"></script>
-  <style>
-    #map {
-      height: 100%;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
-  <div id="map"></div>
+  <div class="container">
+    <div id="title-bar">
+      <div id="title" class="stack-top">IP Address HeatMap</div>
+    </div>
+    <div id="map"></div>
+  </div>
 
   <script>
     // initialize the map
     var map = L.map('map', {
       worldCopyJump: true,
-    minZoom: 5,
-    maxZoom: 18
+      minZoom: 5,
+      maxZoom: 18
     }).setView([51.5, 0], 13);
-      var heat = null;
+    var heat = null;
       // load a tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
 
-      map.setZoom(10);
+    map.setZoom(10);
 
-      const Http = new XMLHttpRequest();
-      const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded';
-      
-      //initialize heat layer
-      locations = [];
-      heat = L.heatLayer(locations, { radius: 35 });
-      map.addLayer(heat);
-      addHeatLayer()
+    const Http = new XMLHttpRequest();
+    const url = 'https://flannel-chesterfield-04687.herokuapp.com/ipv4heatmapbounded';
+    
+    //initialize heat layer
+    locations = [];
+    heat = L.heatLayer(locations, { radius: 35 });
+    map.addLayer(heat);
+    addHeatLayer();
 
-      map.on('moveend', function() { 
-        addHeatLayer();
-      });
+    map.on('moveend', function() { 
+      addHeatLayer();
+    });
 
-      function addHeatLayer() {
-        map.removeLayer(heat);
+    function addHeatLayer() {
+      map.removeLayer(heat);
 
-        var low_lat = map.getBounds()['_southWest']['lat'];
-        var high_lat = map.getBounds()['_northEast']['lat'];
-        var low_lng = map.getBounds()['_southWest']['lng'];
-        var high_lng = map.getBounds()['_northEast']['lng'];
-        let url_b = url + '/' + low_lat + '/' + high_lat + '/' + low_lng + '/' + high_lng;
-        console.log(url_b);
-        updateHeat(url_b);
-      }
+      var low_lat = map.getBounds()['_southWest']['lat'];
+      var high_lat = map.getBounds()['_northEast']['lat'];
+      var low_lng = map.getBounds()['_southWest']['lng'];
+      var high_lng = map.getBounds()['_northEast']['lng'];
+      let url_b = url + '/' + low_lat + '/' + high_lat + '/' + low_lng + '/' + high_lng;
+      console.log(url_b);
+      updateHeat(url_b);
+    }
 
-      function updateHeat(url_b) {
-        Http.open('GET', url_b);
-        Http.send();
+    function updateHeat(url_b) {
+      Http.open('GET', url_b);
+      Http.send();
 
-        Http.onreadystatechange = e => {
-          map.removeLayer(heat)
+      Http.onreadystatechange = e => {
+        map.removeLayer(heat)
 
-          var locations = []
-          var data = JSON.parse(Http.responseText);
-          data.forEach(function(item, index, array) {
-            var loc = [item['latitude'],item['longitude'], item['heat']];
-            locations.push(loc);
-          })
+        var locations = []
+        var data = JSON.parse(Http.responseText);
+        data.forEach(function(item, index, array) {
+          var loc = [item['latitude'],item['longitude'], item['heat']];
+          locations.push(loc);
+        })
 
-          heat = L.heatLayer(locations, { radius: 35 });
-          map.addLayer(heat);
-        };
-      }
-
+        heat = L.heatLayer(locations, { radius: 35 });
+        map.addLayer(heat);
+      };
+    }
   </script>
 </body>
 
