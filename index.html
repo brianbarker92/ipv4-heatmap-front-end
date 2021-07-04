@@ -24,7 +24,7 @@
   <script>
     // initialize the map
     const map = L.map('map', {
-      worldCopyJump: true,
+      worldCopyJump: true, // this prevents the map bounds from going past +/- 180 degrees longitude
       minZoom: 5,
       maxZoom: 18
     }).setView([51.5, 0], 13);
