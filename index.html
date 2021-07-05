@@ -61,14 +61,12 @@
     }
 
     function updateHeat(heat_url_full) {
-      Http.open('GET', heat_url_full);
-      Http.send();
-
-      Http.onreadystatechange = e => {
+      fetch(heat_url_full)
+      .then(response => response.json())
+      .then(data => {
         map.removeLayer(heat)
 
         var locations = []
-        var data = JSON.parse(Http.responseText);
         data.forEach(function(item, index, array) {
           var loc = [item['latitude'],item['longitude'], item['heat']];
           locations.push(loc);
@@ -76,7 +74,7 @@
 
         heat = L.heatLayer(locations, { radius: 30 });
         map.addLayer(heat);
-      };
+      });
     }
   </script>
 </body>
